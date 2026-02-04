@@ -21,14 +21,17 @@ Permet de se connecter, afficher un dashboard et tester les endpoints sécurisé
 ```bash
 git clone https://github.com/LinaIsabelLH/jwtApp-frontend
 cd Frontend-react/my-app
+```
 
 2. **Installer les dépendances**
 ```bash
 npm install
+```
 
 3. Lancer le serveur
 ```bash
 npm run dev
+```
 
 ---
 
