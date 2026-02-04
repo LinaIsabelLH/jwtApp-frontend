@@ -1,9 +1,3 @@
-
----
-
-## 📄 `README.md` pour le **Frontend React**
-
-```markdown
 # TP Sécuriser son Application Web - Frontend
 
 ## Description
