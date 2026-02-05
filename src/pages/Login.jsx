@@ -9,7 +9,6 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    console.log("handleLogin called");
     try {
       const res = await axios.post(
         "http://127.0.0.1:8000/api/auth/token/",
