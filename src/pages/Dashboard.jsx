@@ -33,6 +33,9 @@ function Dashboard() {
       <h1 className="text-3xl font-bold text-sky-700 mb-2 mt-5">
         Bienvenu(e) à votre Dashboard
       </h1>
+      <p className="text-lg font-medium text-sky-600 mt-10">
+        Email : {user.email}
+      </p>
       <p className="text-lg font-medium text-sky-600 my-10">
         Account tier : {user.account_tier}
       </p>
