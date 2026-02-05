@@ -11,11 +11,11 @@ function Login() {
       const res = await axios.post(
         "http://127.0.0.1:8000/api/auth/token/",
         { email, password },
-        { withCredentials: true }
+        { withCredentials: true }  //Permet d'envoyer le refresh token gardé dans un cookie HttpOnly
       );
 
       sessionStorage.setItem("access", res.data.access);
-      window.location = "/";
+      window.location = "/";   //login OK, redirection Dashboard
     } catch (err) {
       alert("Erreur de connexion: " + err);
     }
