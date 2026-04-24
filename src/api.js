@@ -40,7 +40,10 @@ api.interceptors.response.use(
 
       try {
         //refresh : récupère nouvel access token
-        const res = await api.post("auth/token/refresh/"); 
+        const res = await api.post("auth/token/refresh/",
+          { email, password },
+          { withCredentials: true }  //Permet d'envoyer le refresh token gardé dans un cookie HttpOnly
+        )
 
         sessionStorage.setItem("access", res.data.access);
 
