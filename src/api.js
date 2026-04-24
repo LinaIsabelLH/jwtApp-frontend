@@ -1,39 +1,60 @@
 import axios from "axios";
 
- // axios.create : crée ton API
 const api = axios.create({
   baseURL: "http://127.0.0.1:8000/api/",
   withCredentials: true,
 });
 
-// request interceptor :  ajoute le token
+// Ajoute automatiquement l'access token sur chaque requête
 api.interceptors.request.use((config) => {
   const token = sessionStorage.getItem("access");
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
-// response interceptor : gère expiration 
+// Gère automatiquement l'expiration de l'access token
 api.interceptors.response.use(
-  (res) => res,
+  (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    const originalRequest = error.config;
+
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+
+    // Si c'était une requête refresh qui avait échoué, on coupe tout sans reessayer
+    if (originalRequest?.url?.includes("auth/token/refresh/")) {
+      sessionStorage.removeItem("access");
+      window.location = "/login";
+      return Promise.reject(error);
+    }
+
+    // Si on reçoit 401 et qu'on n'a pas encore tenté le refresh 
+    // Pour éviter une boucle infinite
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
       try {
-        const res = await axios.post(   //refresh : récupère nouveau token
-          "http://127.0.0.1:8000/api/auth/token/refresh/",
-          {},
-          { withCredentials: true }
-        );
+        //refresh : récupère nouvel access token
+        const res = await api.post("auth/token/refresh/"); 
+
         sessionStorage.setItem("access", res.data.access);
-        error.config.headers.Authorization = "Bearer " + res.data.access;  //relance requête, invisible pour l'user
-        return axios(error.config);
-      } catch {
-        sessionStorage.removeItem("access");   //échec refresh : logout automatique
+
+        originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
+
+        // Rejoue la requête initiale avec la même instance Axios
+        return api(originalRequest);
+      } catch (refreshError) {
+        sessionStorage.removeItem("access");
         window.location = "/login";
+        return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );

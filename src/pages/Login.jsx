@@ -1,6 +1,6 @@
 import reactLogo from "../assets/react.svg";
 import { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -10,8 +10,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/auth/token/",
+      const res = await api.post("auth/token/",
         { email, password },
         { withCredentials: true }  //Permet d'envoyer le refresh token gardé dans un cookie HttpOnly
       );
