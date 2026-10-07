@@ -4,12 +4,15 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
+  const navigate = useNavigate();
   // Au chargement de la page, on récupère les infos du user depuis le JWT (email, account_tier…)
   const token = sessionStorage.getItem("access");
+  if (token === null) {
+    return navigate("/login");
+  }
   const user = jwtDecode(token);
 
-  const [message, setMessage] = useState("");   //Stockage du msg res.data.message pour l'afficher
-  const navigate = useNavigate();
+  const [message, setMessage] = useState(""); //Stockage du msg res.data.message pour l'afficher
 
   // Les boutons utilisent axios, logique dans api.js
   const callApi = async (url) => {
@@ -24,8 +27,7 @@ function Dashboard() {
 
   const logout = () => {
     sessionStorage.removeItem("access");
-    setMessage(""),
-    navigate("/login");
+    (setMessage(""), navigate("/login"));
   };
 
   return (
